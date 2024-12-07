@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint</title>
+    <style>
+    body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+        }
+   
+    
+    #paint-container {
+        border: 2px solid #333;
+        background-color: #fff;
+        overflow: hidden;
+    }
+    #btnContainer {
+        display: flex;
+        justify-content: center;
+        padding: 25px;
+        background-color: #f4f4f4;
+        border-top: 1px solid #f0a4a4;
+    }
+
+    button {
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    #paintCanvas {
+        cursor: crosshair;
+    }
+    
+    </style>
+</head>
+<body>
+    <form>
+        <h1>Paint</h1>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">       
+            <a href="/charts">Back</a>         
+    </ul>
+</form>
+    <div id="paint-container">
+        
+        <canvas id="paintCanvas" width="1100" height="700"></canvas>
+        
+    </div>
+    <div id="btnContainer">
+    <button id="saveButton">Save</button>
+    </div>
+   
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const canvas = document.getElementById('paintCanvas');
+        const context = canvas.getContext('2d');
+        const saveButton = document.getElementById('saveButton');
+    
+        let painting = false;
+    
+        function startPosition(e) {
+            painting = true;
+            draw(e);
+        }
+    
+        function endPosition() {
+            painting = false;
+            context.beginPath();
+        }
+    
+        function draw(e) {
+            if (!painting) return;
+    
+            context.lineWidth = 5;
+            context.lineCap = 'round';
+            context.strokeStyle = 'black';
+    
+            context.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            context.stroke();
+            context.beginPath();
+            context.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+        }
+    
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
+    
+        saveButton.addEventListener('click', function () {
+            const dataURL = canvas.toDataURL(); // Convert canvas content to data URL
+            const a = document.createElement('a');
+            a.href = dataURL;
+            a.download = 'drawing.png'; // Set the filename for the downloaded image
+            a.click();
+        });
+    });
+    
+    </script>
+</body>
+</html>

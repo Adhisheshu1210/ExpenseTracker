@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Sidenav</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .sidenav {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #f1f1f1;
+            padding-top: 20px;
+        }
+
+        .sidenav a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #000;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidenav a:hover {
+            color: #007bff;
+        }
+
+        .content {
+            margin-left: 200px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidenav">
+    <a href="/charts">Home</a>
+    <a href="/layout3">About</a>
+    <a href="https://r.search.yahoo.com/cbclk2/dWU9MHUzaHJvbGlscDVoNiZ1dD0xNzAwNTY2NTYzMjM3JnVvPTgyNTMyNDYwMjIzMjI5Jmx0PTImcz0xJmVzPThhNHZIeVVHUFMuSTFEOTV1eUw4T2ZIVnRHLlFMa0xOcGMxMUN0RjBBV2FqcEZ3LX5A/RV=2/RE=1703158563/RO=14/RU=https%3a%2f%2fwww.bing.com%2faclick%3fld%3de8DCt4N0N37FD7qxVN6frSxjVUCUzGluN_Z7DDRjg02g4W3Y4PdQHUVZkOYI8PzxLU112Y2ENV_eLwsYj2sMLb10xuT3L061czYCGlvfc3IF81_Q714nUkz9oi9xFrUw2Fb6jqvtirs5opIl-sAv2S9HvZZ_kNDOIjDlnioYHl9EdfaENxufdjXGISMu-UnhbAxHqPaQ%26u%3daHR0cHMlM2ElMmYlMmZjbGlja3NlcnZlLmRhcnRzZWFyY2gubmV0JTJmbGluayUyZmNsaWNrJTNmbGlkJTNkMzk3MDAwNzY3MjM5MjcwNjUlMjZkc19zX2t3Z2lkJTNkNTg3MDAwMDg0MzQ3NTM4NDclMjZkc19hX2NpZCUzZDY2MTYwNzcyMyUyNmRzX2FfY2FpZCUzZDE4Mjc0OTI0MjE3JTI2ZHNfYV9hZ2lkJTNkMTUwNDQ3MDk4MTM1JTI2ZHNfYV9saWQlM2Rkc2EtMTc0MDI2NzEyOTMwMCUyNiUyNmRzX2VfYWRpZCUzZDgyNTMyNDYwMjIzMjI5JTI2ZHNfZV90YXJnZXRfaWQlM2RkYXQtMjMzNDMzMTkwNTQ3NjMzNCUzYWxvYy05MCUyNiUyNmRzX2VfbmV0d29yayUzZG8lMjZkc191cmxfdiUzZDIlMjZkc19kZXN0X3VybCUzZGh0dHBzJTNhJTJmJTJmbW9uaXRvci5wcGNwcm90ZWN0LmNvbSUyZnYzLjAlMmZ0ZW1wbGF0ZSUzZmFjY2lkJTNkMTU2ODYlMjZrdyUzZGZvcm0lMjZtdCUzZGIlMjZudyUzZG8lMjZjcG4lM2Q0MTkyNTExMjklMjZkZXZpJTNkYyUyNmRldm0lM2QlMjZsb2NwJTNkMTE2MDc0JTI2bG9jaSUzZCUyNnBsJTNkJTI2Y3IlM2QlMjZhZHAlM2QlMjZzYWR0JTNkJTI2dXJsJTNkaHR0cHMlM2ElMmYlMmZ3d3cudHlwZWZvcm0uY29tJTJmdGVtcGxhdGVzJTJmdCUyZnBlcnNvbmFsLWV4cGVuc2UtdHJhY2tlciUyZiUzZmdjbGlkJTNkYTJjYjQ4OTM5YWZkMWExMzJiOTgyZGNmMGNkZTQyYTklMjZnY2xzcmMlM2QzcC5kcyUyNiUyNnRmX2NhbXBhaWduJTNkQVNJQV9NRS1HZW5lcmljLUZvcm0tRW5nbGlzaC1EZXNrdG9wXzQxOTI1MTEyOSUyNnRmX3NvdXJjZSUzZGJpbmclMjZ0Zl9tZWRpdW0lM2RwYWlkJTI2dGZfY29udGVudCUzZDEzMjA1MTU3NTMzMjEzOTlfJTI2dGZfdGVybSUzZGZvcm0lMjZ0Zl9kdiUzZGMlMjZ0Zl9tYXRjaHR5cGUlM2RiJTI2dGZfYWRwb3NpdGlvbiUzZCUyNnRmX2xvY2F0aW9uJTNkMTE2MDc0JTI2bXNjbGtpZCUzZGEyY2I0ODkzOWFmZDFhMTMyYjk4MmRjZjBjZGU0MmE5%26rlid%3da2cb48939afd1a132b982dcf0cde42a9/RK=2/RS=JLqKPmEuadzKsQ_QA8DjfbFXW7g-;_ylt=AwrKBRsjllxltTIA1vy7HAx.;_ylu=Y29sbwNzZzMEcG9zAzIEdnRpZAMEc2VjA292LXRvcA--;_ylc=X3IDMgRydAMw?IG=0aca051b16f6470db1000000002afcae">Services</a>
+    <a href="#contact">Contact</a>
+    
+</div>
+
+<div class="content">
+    <h2>EXPENSETRACKER</h2>
+    <p>An expense tracker is an incredibly useful and practical financial tool. The main purpose of an expense tracker, also known as a finance tracker, is to identify where you are spending your money, and from there, you can identify ways or opportunities to save or invest more of your money and reduce your cost of living.</p>
+    <p>You can track your expenses from anywhere at any time with cloud-based software and expense tracker apps. Plus, it makes it much easier to manage your accounts receivable and payable and payroll. Tracking your expenses is easier than ever with FreshBooks’ expense and receipt tracking software.</p>
+    
+</div>
+
+
+</body>
+</html>
