@@ -28,7 +28,7 @@ SECRET_KEY = '4--(d0^o%3vqt#-c(hf+8)a$95z8gbo57xol5pft!%xpve9_zd'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 
 
 # Application definition
@@ -67,6 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'home.context_processors.user_profile',
             ],
         },
     },
@@ -135,8 +136,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER', os.environ.get('EMAIL_HOST_USER', 'angothuadhisheshu@gmail.com'))
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS', os.environ.get('EMAIL_HOST_PASSWORD', 'ppeokoakdghsyfcw'))
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or 'noreply@expensetracker.local'
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'static/img')
 MEDIA_URL = '/img/'

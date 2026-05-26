@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notepad — ExpenseTracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
+  <style>
+    :root{--bg:#07111b;--panel:rgba(9,16,27,.88);--panel-border:rgba(255,255,255,.08);--text:#eff5ff;--muted:rgba(239,245,255,.72);--accent:#63d6c8;--accent2:#ffb347;--danger:#ff7c5c}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Inter',sans-serif;background:radial-gradient(circle at top left, rgba(99,214,200,.16), transparent 28%),radial-gradient(circle at top right, rgba(255,179,71,.12), transparent 25%),linear-gradient(180deg,#061018 0%,#0c1726 100%);color:var(--text);min-height:100vh}
+    .shell{max-width:1200px;margin:0 auto;padding:24px}
+    .hero{background:linear-gradient(135deg,rgba(99,214,200,.12),rgba(255,179,71,.10));border:1px solid rgba(255,255,255,.08);border-radius:26px;padding:22px 22px 18px;box-shadow:0 24px 70px rgba(0,0,0,.28)}
+    .hero-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800}
+    .brand-mark{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent2),#ff7c5c);color:#10161f;box-shadow:0 12px 28px rgba(255,179,71,.24)}
+    .hero h1{margin:.85rem 0 .25rem;font-weight:800;letter-spacing:-.03em}
+    .hero p{margin:0;color:var(--muted);max-width:68ch}
+    .actions{display:flex;gap:.6rem;flex-wrap:wrap}
+    .btn-soft{border-radius:999px;padding:.7rem 1rem;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:var(--text)}
+    .btn-soft:hover{background:rgba(255,255,255,.08);color:var(--text);text-decoration:none}
+
+    .grid{margin-top:22px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:20px}
+    @media(max-width:980px){.grid{grid-template-columns:1fr}}
+    .card-panel{background:var(--panel);border:1px solid var(--panel-border);border-radius:24px;box-shadow:0 24px 70px rgba(0,0,0,.35);overflow:hidden}
+    .card-head{padding:18px 18px 0}
+    .card-head h2{margin:0;font-size:1.1rem;font-weight:800}
+    .card-head .sub{color:var(--muted);font-size:.92rem;margin-top:.25rem}
+    .toolbar{display:flex;gap:.55rem;flex-wrap:wrap;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .tool{border:0;border-radius:12px;padding:.65rem .9rem;background:rgba(255,255,255,.05);color:var(--text)}
+    .tool:hover{background:rgba(255,255,255,.08)}
+    textarea{width:100%;min-height:560px;resize:vertical;border:0;outline:0;background:transparent;color:var(--text);padding:18px;font-size:1rem;line-height:1.8}
+    textarea::placeholder{color:rgba(239,245,255,.45)}
+    .side-box{padding:18px}
+    .note-stat{padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);margin-bottom:12px}
+    .note-stat strong{display:block;font-size:1.2rem}
+    .note-stat span{color:var(--muted);font-size:.92rem}
+    .savebar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:16px 18px 18px;border-top:1px solid rgba(255,255,255,.08)}
+    .savebtn{border:0;border-radius:14px;padding:.8rem 1.1rem;font-weight:700;background:linear-gradient(135deg,var(--accent),#8be2d8);color:#071018}
+    .savebtn:hover{filter:brightness(1.04)}
+    .hint{color:var(--muted);font-size:.92rem}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="hero">
+      <div class="hero-top">
+        <div class="brand">
+          <div class="brand-mark"><i class="fas fa-sticky-note"></i></div>
+          <div>
+            <div style="font-size:.92rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Dashboard tool</div>
+            <div style="font-size:1.05rem">Notepad</div>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="btn-soft" href="{% url 'index' %}"><i class="fas fa-tachometer-alt mr-1"></i>Dashboard</a>
+          <a class="btn-soft" href="{% url 'paint' %}"><i class="fas fa-paint-brush mr-1"></i>Paint</a>
+          <a class="btn-soft" href="{% url 'settings' %}"><i class="fas fa-cog mr-1"></i>Settings</a>
+        </div>
+      </div>
+      <h1>Write quick notes without leaving the app</h1>
+      <p>Use this space for reminders, weekly plans, budget ideas, or anything you want to keep alongside your expenses. Save exports locally as a text file.</p>
+    </div>
+
+    <div class="grid">
+      <form class="card-panel" id="notepadForm" method="post" action="{% url 'save_notepad' %}">
+        {% csrf_token %}
+        <div class="card-head">
+          <h2>Your notes</h2>
+          <div class="sub">Autosized editor with export support</div>
+        </div>
+        <div class="toolbar">
+          <button class="tool" type="button" id="saveButton"><i class="fas fa-save mr-1"></i>Save to history</button>
+          <button class="tool" type="button" id="downloadButton"><i class="fas fa-download mr-1"></i>Download text file</button>
+          <button class="tool" type="button" id="clearButton"><i class="fas fa-eraser mr-1"></i>Clear</button>
+        </div>
+        <textarea id="textarea" name="content" placeholder="Write your notes here...">{{ initial_content }}</textarea>
+        <div class="savebar">
+          <div class="hint">Tip: keep daily reminders, recurring bills, or category ideas here.</div>
+          <a href="{% url 'index' %}" class="btn-soft">Back to dashboard</a>
+        </div>
+      </form>
+
+      <aside class="card-panel">
+        <div class="card-head">
+          <h2>Quick shortcuts</h2>
+          <div class="sub">Useful links in the same design system</div>
+        </div>
+        <div class="side-box">
+          <div class="note-stat"><strong>Save</strong><span>Download your note as .txt.</span></div>
+          <div class="note-stat"><strong>Paint</strong><span>Open the sketch board for drawings.</span></div>
+          <div class="note-stat"><strong>Dashboard</strong><span>Return to expense tracking anytime.</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const textarea = document.getElementById('textarea');
+      const saveButton = document.getElementById('saveButton');
+      const downloadButton = document.getElementById('downloadButton');
+      const clearButton = document.getElementById('clearButton');
+      const initialHistoryId = "{{ history_id|default:'' }}";
+
+      saveButton.addEventListener('click', function () {
+        if (textarea.value.trim() === '') {
+          alert('Please write something before saving!');
+          return;
+        }
+        textarea.form.submit();
+      });
+
+      downloadButton.addEventListener('click', function () {
+        const content = textarea.value;
+        if (content.trim() === '') {
+          alert('Please write something before downloading!');
+          return;
+        }
+        const blob = new Blob([content], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'note.txt';
+        a.click();
+      });
+
+      clearButton.addEventListener('click', function () {
+        textarea.value = '';
+      });
+    });
+  </script>
+</body>
+</html>

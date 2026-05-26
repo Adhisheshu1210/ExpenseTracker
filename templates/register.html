@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% block title %}ExpenseTracker | Sign Up{% endblock title %}
+{% block body %}
+<style>
+    .signup-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+        gap: 1.25rem;
+        align-items: stretch;
+    }
+
+    .signup-visual {
+        position: relative;
+        min-height: 720px;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        background:
+            linear-gradient(180deg, rgba(7, 13, 21, 0.08), rgba(7, 13, 21, 0.75)),
+            url('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .signup-copy {
+        position: absolute;
+        inset: auto 1rem 1rem 1rem;
+        padding: 1rem 1.1rem;
+        border-radius: 1.2rem;
+        background: rgba(7, 13, 21, 0.75);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .signup-copy h1 {
+        margin: 0 0 0.5rem;
+        font-size: 1.8rem;
+    }
+
+    .signup-copy p {
+        margin: 0;
+        color: rgba(239, 245, 255, 0.72);
+        line-height: 1.7;
+    }
+
+    .signup-card {
+        padding: 1.3rem;
+        border-radius: 1.5rem;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .signup-card h2 {
+        margin: 0;
+        font-size: 2rem;
+        letter-spacing: -0.02em;
+    }
+
+    .signup-card .subtext {
+        margin: 0.45rem 0 1.2rem;
+        color: rgba(239, 245, 255, 0.72);
+        line-height: 1.7;
+    }
+
+    .signup-form {
+        display: grid;
+        gap: 0.95rem;
+    }
+
+    .field-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.85rem;
+    }
+
+    .signup-field {
+        display: grid;
+        gap: 0.45rem;
+    }
+
+    .signup-field label {
+        font-size: 0.92rem;
+        color: rgba(239, 245, 255, 0.9);
+    }
+
+    .signup-field input,
+    .signup-field select {
+        width: 100%;
+        padding: 0.95rem 1rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        color: #d0ac49;
+        outline: none;
+    }
+
+    .signup-field input:focus,
+    .signup-field select:focus {
+        border-color: rgba(99, 214, 200, 0.6);
+        box-shadow: 0 0 0 3px rgba(99, 214, 200, 0.14);
+    }
+
+    .signup-button {
+        border: none;
+        border-radius: 999px;
+        padding: 0.95rem 1.35rem;
+        background: linear-gradient(135deg, #ffb347, #ff8e4a);
+        color: #10161f;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .signup-footer {
+        margin-top: 1rem;
+        color: rgba(239, 245, 255, 0.76);
+    }
+
+    .signup-footer a {
+        color: #8be2d8;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    @media (max-width: 960px) {
+        .signup-grid,
+        .field-row {
+            grid-template-columns: 1fr;
+        }
+
+        .signup-visual {
+            min-height: 280px;
+        }
+    }
+</style>
+
+<div class="signup-grid">
+    <div class="signup-visual">
+        <div class="signup-copy">
+            <h1>Create your account.</h1>
+            <p>Set up income, savings, and spending tracking for the dashboard with a polished start screen.</p>
+        </div>
+    </div>
+
+    <div class="signup-card">
+        <h2>Expense Tracker Create Account</h2>
+        <p class="subtext">Fill in your details to start using the tracker.</p>
+
+        <form class="signup-form" action="{% url 'handleSignup' %}" method="post">
+            {% csrf_token %}
+            <div class="signup-field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="Enter Gmail address" required />
+            </div>
+
+            <div class="field-row">
+                <div class="signup-field">
+                    <label for="fname">First Name</label>
+                    <input id="fname" name="fname" type="text" placeholder="Enter first name" />
+                </div>
+                <div class="signup-field">
+                    <label for="lname">Last Name</label>
+                    <input id="lname" name="lname" type="text" placeholder="Enter last name" />
+                </div>
+            </div>
+
+            <div class="signup-field">
+                <label for="profession">Profession</label>
+                <select name="profession" id="profession">
+                    <option value="Employee">Employee</option>
+                    <option value="Business">Business</option>
+                    <option value="Student">Student</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="field-row">
+                <div class="signup-field">
+                    <label for="income">Income</label>
+                    <input id="income" name="income" type="text" placeholder="Income" required />
+                </div>
+                <div class="signup-field">
+                    <label for="Savings">Savings</label>
+                    <input id="Savings" name="Savings" type="text" placeholder="Amount to be saved" required />
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="signup-field">
+                    <label for="pass1">Password</label>
+                    <input id="pass1" name="pass1" type="password" minlength="8" placeholder="Enter password (min 8 characters)" required />
+                </div>
+                <div class="signup-field">
+                    <label for="pass2">Confirm Password</label>
+                    <input id="pass2" name="pass2" type="password" minlength="8" placeholder="Confirm password" required />
+                </div>
+            </div>
+
+            <button class="signup-button" type="submit">Create User</button>
+        </form>
+
+        <div class="signup-footer">
+            Already have an account? <a href="{% url 'login' %}">Go to login</a>
+        </div>
+    </div>
+</div>
+{% endblock body %}

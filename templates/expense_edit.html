@@ -1,0 +1,304 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>ExpenseTracker | Edit Entry</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --bg: #07111b;
+            --panel: rgba(9,16,27,.88);
+            --panel-border: rgba(255,255,255,.08);
+            --text: #f3f5f7;
+            --muted: rgba(239,245,255,.72);
+            --accent: #63d6c8;
+            --accent2: #ffb347;
+            --danger: #ff7c5c;
+        }
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(99, 214, 200, 0.16), transparent 28%),
+                radial-gradient(circle at top right, rgba(255, 179, 71, 0.12), transparent 25%),
+                linear-gradient(180deg, #061018 0%, #0c1726 100%);
+            color: var(--text);
+        }
+        .dashboard-shell { min-height: 100vh; }
+        .topbar {
+            position: sticky; top: 0; z-index: 20;
+            backdrop-filter: blur(18px);
+            background: rgba(7, 13, 21, 0.72);
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+        .topbar-inner {
+            max-width: 1500px; margin: 0 auto; padding: .9rem 1.25rem;
+            display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+        }
+        .brand {
+            display: inline-flex; align-items: center; gap: .75rem; color: var(--text); font-weight: 800; text-decoration: none;
+        }
+        .brand-mark {
+            width: 2.5rem; height: 2.5rem; border-radius: .9rem; display: grid; place-items: center;
+            background: linear-gradient(135deg, var(--accent2), #ff7c5c); color: #10161f; box-shadow: 0 12px 28px rgba(255,179,71,.24);
+        }
+        .top-actions { display: flex; gap: .6rem; flex-wrap: wrap; }
+        .top-actions .btn { border-radius: 999px; }
+        .sidebar-toggle {
+            border: 1px solid rgba(255,255,255,.1);
+            background: rgba(255,255,255,.04);
+            color: var(--text);
+            width: 44px; height: 44px; border-radius: 14px;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .layout {
+            max-width: 1500px; margin: 0 auto; padding: 1.25rem;
+            display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 1.25rem;
+        }
+        .layout.sidebar-collapsed { grid-template-columns: 1fr; }
+        .layout.sidebar-collapsed .sidebar { display: none; }
+        .sidebar, .panel {
+            background: var(--panel); border: 1px solid var(--panel-border); border-radius: 28px; box-shadow: 0 24px 70px rgba(0,0,0,.35); overflow: hidden;
+        }
+        .sidebar { position: sticky; top: 96px; height: fit-content; }
+        .sidebar-hero {
+            padding: 1.3rem; background: linear-gradient(135deg, rgba(99,214,200,.16), rgba(255,179,71,.12));
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+        .sidebar-hero h2 { margin: 0; font-size: 1.15rem; font-weight: 800; }
+        .sidebar-hero p { margin: .35rem 0 0; color: var(--muted); }
+        .navlist { padding: .6rem; display: grid; gap: .35rem; }
+        .navlist a {
+            color: var(--text); text-decoration: none; padding: .9rem 1rem; border-radius: 16px;
+            display: flex; align-items: center; gap: .8rem; background: rgba(255,255,255,.03); border: 1px solid transparent;
+        }
+        .navlist a:hover { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.08); }
+        .sidebar-footer { padding: 1rem 1.15rem 1.2rem; border-top: 1px solid rgba(255,255,255,.08); color: var(--muted); }
+        .profile-menu .dropdown-toggle::after { display: none; }
+        .profile-chip {
+            display: inline-flex; align-items: center; gap: .7rem; padding: .55rem .8rem; border-radius: 999px;
+            background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); color: var(--text);
+        }
+        .profile-avatar {
+            width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), #8be2d8); color: #071018;
+        }
+        .dropdown-menu.dashboard-menu {
+            background: rgba(7, 13, 21, .96); border: 1px solid rgba(255,255,255,.1); border-radius: 18px; box-shadow: 0 24px 70px rgba(0,0,0,.35);
+        }
+        .dropdown-menu.dashboard-menu .dropdown-item { color: var(--text); }
+        .dropdown-menu.dashboard-menu .dropdown-item:hover { background: rgba(255,255,255,.06); }
+        .dropdown-menu.dashboard-menu .dropdown-divider { border-top:1px solid rgba(255,255,255,.08); }
+        .dropdown-menu.dashboard-menu .dropdown-item i { width: 1rem; text-align: center; }
+        .panel { padding: 1.25rem; }
+        .hero {
+            padding: 1.5rem; border-radius: 24px;
+            background: linear-gradient(135deg, rgba(99,214,200,.12), rgba(255,179,71,.10));
+            border: 1px solid rgba(255,255,255,.08);
+        }
+        .hero h1 { margin: 0; font-size: clamp(2rem, 4vw, 3.25rem); font-weight: 800; letter-spacing: -0.03em; }
+        .hero p { margin: .75rem 0 0; color: var(--muted); max-width: 68ch; line-height: 1.7; }
+        .profile-grid { margin-top: 1.25rem; display: grid; grid-template-columns: 320px minmax(0,1fr); gap: 1.25rem; }
+        .panel-card {
+            border-radius: 24px; padding: 1.2rem; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+        }
+        .avatar {
+            width: 140px; height: 140px; border-radius: 50%; margin: 0 auto 1rem; display: grid; place-items: center;
+            background: linear-gradient(135deg, #63d6c8, #8be2d8); color: #071018; font-size: 3rem; font-weight: 800;
+        }
+        .section-title { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom: 1rem; }
+        .section-title h2 { margin:0; font-size: 1.15rem; font-weight: 800; }
+        .detail-list { display: grid; gap: .75rem; }
+        .detail-row {
+            display: flex; justify-content: space-between; gap: 1rem; padding: .9rem 1rem; border-radius: 16px;
+            background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+        }
+        .detail-row span { color: var(--muted); }
+        .panel-card .summary-amount { font-size: 2.25rem; font-weight: 900; text-align: center; }
+        .panel-card .summary-meta { color: rgba(239,245,255,.72); margin-top: .5rem; text-align: center; }
+        .form-section { padding: 1rem; border-radius: 24px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08) }
+        .form-actions { display:flex; gap:.6rem; justify-content:flex-end; margin-top:1rem }
+        .btn-cancel { background: transparent; border: 1px solid rgba(255,255,255,.06); color: var(--text); }
+        .form-control, .custom-select {
+            background: rgba(255,255,255,.03); color: yellow; border: 1px solid rgba(255,255,255,.08); border-radius: 14px;
+        }
+        .form-control:focus, .custom-select:focus {
+            background: rgba(255,255,255,.03); color: yellow; border-color: rgba(99,214,200,.65); box-shadow: 0 0 0 .2rem rgba(99,214,200,.12);
+        }
+        label { color: var(--muted); font-weight: 600; }
+        .custom-control-label::before { background-color: rgba(255,255,255,.08); border-color: rgba(255,255,255,.12); }
+        .custom-radio .custom-control-input:checked ~ .custom-control-label::before { background-color: var(--accent); border-color: var(--accent); }
+        @media (max-width: 1200px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+            .profile-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 720px) {
+            .form-actions { flex-direction: column; }
+            .form-actions .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="topbar-inner">
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+                <button class="sidebar-toggle" type="button" id="sidebarToggle" aria-label="Toggle sidebar"><i class="fas fa-bars"></i></button>
+                <a class="brand" href="{% url 'home' %}"><span class="brand-mark">ET</span><span>ExpenseTracker</span></a>
+            </div>
+            <div class="top-actions">
+                <a class="btn btn-outline-light btn-sm" href="{% url 'index' %}"><i class="fas fa-tachometer-alt mr-1"></i>Dashboard</a>
+                <a class="btn btn-info btn-sm" href="{% url 'addmoney' %}"><i class="fas fa-plus mr-1"></i>Add Entry</a>
+                <div class="dropdown profile-menu">
+                    <a class="profile-chip dropdown-toggle" href="#" role="button" id="profileMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {% if profile and profile.image %}
+                            <img src="{{ profile.image.url }}" class="profile-avatar" alt="{{ user.first_name|default:user.username }}">
+                        {% else %}
+                            <span class="profile-avatar">{{ user.first_name|default:user.username|slice:':1'|upper }}</span>
+                        {% endif %}
+                        <span class="d-none d-sm-inline">{{ user.first_name }} {{ user.last_name }}</span>
+                        <i class="fas fa-chevron-down small"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right dashboard-menu" aria-labelledby="profileMenuButton">
+                        <a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user-circle mr-2"></i>Profile</a>
+                        <a class="dropdown-item" href="{% url 'settings' %}"><i class="fas fa-cog mr-2"></i>Settings</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'notepad' %}"><i class="fas fa-sticky-note mr-2"></i>Notepad</a>
+                        <a class="dropdown-item" href="{% url 'paint' %}"><i class="fas fa-paint-brush mr-2"></i>Paint</a>
+                        <a class="dropdown-item" href="{% url 'handleLogout' %}"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layout" id="dashboardLayout">
+        <aside class="sidebar">
+            <div class="sidebar-hero">
+                <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+                <p>Quick navigation and reports</p>
+            </div>
+            <div class="navlist">
+                <a href="{% url 'index' %}"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+                <a href="{% url 'tables' %}"><i class="fas fa-table"></i>History</a>
+                <a href="{% url 'weekly' %}"><i class="fas fa-calendar-week"></i>Weekly</a>
+                <a href="{% url 'stats' %}"><i class="fas fa-chart-pie"></i>Monthly</a>
+                <a href="{% url 'info' %}"><i class="fas fa-chart-line"></i>Yearly</a>
+            </div>
+            <div class="sidebar-footer">
+                <div class="small text-uppercase mb-2">Account</div>
+                <div class="d-flex justify-content-between"><span>Email</span><strong>{{ user.email }}</strong></div>
+            </div>
+        </aside>
+
+        <main class="panel">
+            <section class="hero">
+                <div class="d-flex flex-column flex-lg-row align-items-lg-end justify-content-between gap-3">
+                    <div>
+                        <div class="text-uppercase small" style="color: rgba(239,245,255,.68);">Edit transaction</div>
+                        <h1>Edit entry</h1>
+                        <p class="small" style="color:var(--muted)">Modify an existing transaction. Changes will be reflected in your dashboard immediately.</p>
+                    </div>
+                    <div class="top-actions">
+                        <button id="saveTop" class="btn btn-info btn-lg"><i class="fas fa-save mr-2"></i>Save</button>
+                        <a class="btn btn-outline-light btn-lg" href="{% url 'index' %}">Back</a>
+                    </div>
+                </div>
+            </section>
+
+            <div class="profile-grid">
+                <div class="panel-card">
+                    <div class="text-center">
+                        {% if profile and profile.image %}
+                            <div class="avatar"><img src="{{ profile.image.url }}" alt="{{ user.first_name|default:user.username }}" style="width:100%;height:100%;border-radius:50%;object-fit:cover"></div>
+                        {% else %}
+                            <div class="avatar">{{ user.first_name|default:user.username|slice:':1'|upper }}</div>
+                        {% endif %}
+                        <h3 style="margin:.6rem 0 0">{{ addmoney_info.Category }}</h3>
+                        <div class="summary-amount">{{ addmoney_info.quantity }}</div>
+                        <div class="summary-meta">{{ addmoney_info.Date }} · {{ addmoney_info.add_money }}</div>
+                    </div>
+                    <hr style="border-color: rgba(255,255,255,.04)">
+                    <div class="detail-list">
+                        <div class="detail-row"><strong>Transaction ID</strong><span>{{ addmoney_info.id }}</span></div>
+                        <div class="detail-row"><strong>Category</strong><span>{{ addmoney_info.Category }}</span></div>
+                        <div class="detail-row"><strong>Type</strong><span>{{ addmoney_info.add_money }}</span></div>
+                    </div>
+                </div>
+
+                <div class="panel-card form-section">
+                    <form id="expenseForm" method="post" action="{% url 'addmoney_update' addmoney_info.id %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="section-title">
+                            <h2>Transaction details</h2>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Type</label>
+                                <div class="d-flex gap-3">
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="expenseRadio" name="add_money" class="custom-control-input" value="Expense" {% if addmoney_info.add_money == 'Expense' %}checked{% endif %}>
+                                        <label class="custom-control-label" for="expenseRadio">Expense</label>
+                                    </div>
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="incomeRadio" name="add_money" class="custom-control-input" value="Income" {% if addmoney_info.add_money == 'Income' %}checked{% endif %}>
+                                        <label class="custom-control-label" for="incomeRadio">Income</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="quantity">Amount</label>
+                                <input id="quantity" name="quantity" type="number" class="form-control" required value="{{ addmoney_info.quantity }}">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="Date">Date</label>
+                                <input id="Date" name="Date" type="date" class="form-control" required value="{{ addmoney_info.Date }}">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="Category">Category</label>
+                                <select id="Category" name="Category" class="form-control" required>
+                                    {% for cat in categories %}
+                                        <option value="{{ cat }}" {% if addmoney_info.Category == cat %}selected{% endif %}>{{ cat }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <a href="{% url 'expense_delete' addmoney_info.id %}" class="btn btn-cancel">Delete</a>
+                            <button type="submit" class="btn btn-info">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script>
+        (function () {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const layout = document.getElementById('dashboardLayout');
+            if (sidebarToggle && layout) {
+                sidebarToggle.addEventListener('click', function () {
+                    layout.classList.toggle('sidebar-collapsed');
+                });
+            }
+
+            const saveTop = document.getElementById('saveTop');
+            const expenseForm = document.getElementById('expenseForm');
+            if (saveTop && expenseForm) saveTop.addEventListener('click', () => expenseForm.submit());
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,724 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="ExpenseTracker helps you track income, expenses, savings, and monthly habits in one place." />
+    <title>ExpenseTracker | Smarter Budget Planning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #081018;
+            --bg-soft: #111b29;
+            --panel: rgba(12, 20, 31, 0.82);
+            --panel-strong: #111c2b;
+            --text: #eff5ff;
+            --muted: rgba(239, 245, 255, 0.72);
+            --accent: #ffb347;
+            --accent-2: #63d6c8;
+            --line: rgba(255, 255, 255, 0.1);
+            --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(99, 214, 200, 0.18), transparent 26%),
+                radial-gradient(circle at top right, rgba(255, 179, 71, 0.18), transparent 28%),
+                linear-gradient(180deg, #061019 0%, #0b1521 42%, #070d15 100%);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .page-wrap {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-wrap::before,
+        .page-wrap::after {
+            content: '';
+            position: fixed;
+            inset: auto;
+            width: 26rem;
+            height: 26rem;
+            border-radius: 50%;
+            filter: blur(30px);
+            opacity: 0.45;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .page-wrap::before {
+            top: -8rem;
+            right: -6rem;
+            background: rgba(99, 214, 200, 0.18);
+        }
+
+        .page-wrap::after {
+            left: -8rem;
+            bottom: 8rem;
+            background: rgba(255, 179, 71, 0.15);
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: min(1180px, calc(100% - 2rem));
+            margin: 0 auto;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1.1rem 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+        }
+
+        .brand-mark {
+            width: 2.6rem;
+            height: 2.6rem;
+            display: grid;
+            place-items: center;
+            border-radius: 0.9rem;
+            background: linear-gradient(135deg, var(--accent), #ff7c5c);
+            color: #10161f;
+            box-shadow: 0 12px 30px rgba(255, 179, 71, 0.22);
+        }
+
+        .brand-name {
+            font-size: 1.1rem;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .pill-link,
+        .pill-button {
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 0.85rem 1.2rem;
+            font-weight: 600;
+            transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+        }
+
+        .pill-link:hover,
+        .pill-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .pill-link {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .pill-button.primary {
+            background: linear-gradient(135deg, var(--accent), #ff8e4a);
+            color: #10161f;
+            border-color: transparent;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+            gap: 2rem;
+            align-items: center;
+            padding: 3rem 0 2rem;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--muted);
+            font-size: 0.93rem;
+        }
+
+        h1 {
+            margin: 0;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.9rem, 6vw, 5.5rem);
+            line-height: 0.98;
+            letter-spacing: -0.03em;
+        }
+
+        .hero-copy {
+            margin: 1.25rem 0 1.6rem;
+            max-width: 48rem;
+            font-size: 1.08rem;
+            line-height: 1.75;
+            color: var(--muted);
+        }
+
+        .cta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.9rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .hero-card {
+            padding: 1.1rem;
+            border: 1px solid var(--line);
+            border-radius: 1.5rem;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(18px);
+        }
+
+        .hero-card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.9rem;
+        }
+
+        .hero-stat {
+            padding: 1rem;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .hero-stat strong {
+            display: block;
+            font-size: 1.35rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .hero-visual {
+            position: relative;
+            min-height: 520px;
+            border-radius: 2rem;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: var(--shadow);
+            background:
+                linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.45)),
+                url("{% static 'img/unnamed.png' %}") center/cover no-repeat;
+        }
+
+        .floating-badge {
+            position: absolute;
+            left: 1rem;
+            right: 1rem;
+            bottom: 1rem;
+            display: grid;
+            gap: 0.75rem;
+            padding: 1rem;
+            border-radius: 1.25rem;
+            background: rgba(10, 16, 26, 0.74);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .floating-badge span {
+            color: var(--muted);
+            font-size: 0.94rem;
+        }
+
+        .section {
+            padding: 2rem 0 1rem;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            margin: 0;
+            font-size: 1.8rem;
+            letter-spacing: -0.02em;
+        }
+
+        .section-copy {
+            margin: 0.35rem 0 0;
+            color: var(--muted);
+            max-width: 50rem;
+            line-height: 1.7;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .feature-card {
+            padding: 1.15rem;
+            border-radius: 1.25rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--line);
+        }
+
+        .feature-card h3 {
+            margin: 0 0 0.55rem;
+            font-size: 1.05rem;
+        }
+
+        .feature-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr 0.8fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .image-tile {
+            min-height: 220px;
+            border-radius: 1.4rem;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: var(--shadow);
+        }
+
+        .image-tile::after {
+            content: attr(data-label);
+            position: absolute;
+            left: 0.95rem;
+            bottom: 0.95rem;
+            padding: 0.55rem 0.8rem;
+            border-radius: 999px;
+            background: rgba(7, 13, 21, 0.76);
+            color: var(--text);
+            font-size: 0.88rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .image-tile.one {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.46)), url("{% static 'img/car.jpg' %}") center/cover no-repeat;
+        }
+
+        .image-tile.two {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.46)), url("{% static 'img/coin.jpg' %}") center/cover no-repeat;
+        }
+
+        .image-tile.three {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.46)), url("{% static 'img/burningm.jpg' %}") center/cover no-repeat;
+        }
+
+        .query-section {
+            padding: 3rem 0 4rem;
+        }
+
+        .query-wrap {
+            display: grid;
+            grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+            gap: 1.2rem;
+            padding: 1.2rem;
+            border-radius: 1.8rem;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+        }
+
+        .query-panel {
+            padding: 1.1rem;
+            border-radius: 1.35rem;
+            background: rgba(7, 13, 21, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .query-panel h2 {
+            margin: 0 0 0.7rem;
+            font-size: 1.7rem;
+        }
+
+        .query-panel p,
+        .form-note {
+            color: var(--muted);
+            line-height: 1.75;
+        }
+
+        .query-form {
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        .field-group {
+            display: grid;
+            gap: 0.45rem;
+        }
+
+        label {
+            font-size: 0.92rem;
+            color: rgba(239, 245, 255, 0.86);
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 0.95rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            outline: none;
+            font: inherit;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: rgba(239, 245, 255, 0.45);
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: rgba(99, 214, 200, 0.55);
+            box-shadow: 0 0 0 3px rgba(99, 214, 200, 0.12);
+        }
+
+        .submit-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .submit-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 0.95rem 1.3rem;
+            background: linear-gradient(135deg, var(--accent-2), #8be2d8);
+            color: #071018;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 16px 34px rgba(99, 214, 200, 0.22);
+        }
+
+        .messages {
+            width: min(1180px, calc(100% - 2rem));
+            margin: 0.4rem auto 0;
+        }
+
+        .alert {
+            padding: 0.95rem 1rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            margin-bottom: 0.8rem;
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .alert-success {
+            background: rgba(99, 214, 200, 0.15);
+        }
+
+        .alert-danger {
+            background: rgba(255, 122, 89, 0.16);
+        }
+
+        .footer-spacer {
+            height: 1rem;
+        }
+
+        .landing-footer {
+            width: 100%;
+            margin: 3rem 0 0;
+            padding: 2rem 0 1.25rem;
+            border-top: 1px solid var(--line);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04)),
+                rgba(7, 13, 21, 0.72);
+            box-shadow: 0 -18px 60px rgba(0, 0, 0, 0.22);
+        }
+
+        .landing-footer-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr 0.9fr;
+            gap: 1rem;
+        }
+
+        .landing-footer-inner {
+            width: min(1180px, calc(100% - 2rem));
+            margin: 0 auto;
+        }
+
+        .landing-footer h3 {
+            margin: 0 0 0.55rem;
+            color: var(--text);
+            font-size: 1.05rem;
+        }
+
+        .landing-footer p,
+        .landing-footer a {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .footer-links {
+            display: grid;
+            gap: 0.45rem;
+        }
+
+        .footer-links a {
+            color: var(--text);
+        }
+
+        .footer-bottom {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 960px) {
+            .hero,
+            .query-wrap,
+            .feature-grid,
+            .image-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-visual {
+                min-height: 420px;
+            }
+
+            .section-head,
+            .topbar,
+            .submit-row {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                width: min(100% - 1rem, 1180px);
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero {
+                padding-top: 2rem;
+            }
+
+            .hero-card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrap">
+        <header class="container topbar">
+            <a class="brand" href="{% url 'home' %}">
+                <span class="brand-mark">ET</span>
+                <span class="brand-name">ExpenseTracker</span>
+            </a>
+            <nav class="nav-actions" aria-label="Primary">
+                <a class="pill-link" href="{% url 'login' %}">Login</a>
+                <a class="pill-button primary" href="{% url 'register' %}">Sign Up</a>
+            </nav>
+        </header>
+
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+
+        <main class="container">
+            <section class="hero">
+                <div>
+                    <div class="eyebrow">Smart money tracking for everyday life</div>
+                    <h1>See where every rupee goes before the month runs away.</h1>
+                    <p class="hero-copy">
+                        ExpenseTracker helps you capture income, expenses, savings targets, and spending habits with a simple dashboard.
+                        Log in when you are ready to review your records, or create an account to start tracking immediately.
+                    </p>
+                    <div class="cta-row">
+                        <a class="pill-button primary" href="{% url 'login' %}">Login to Dashboard</a>
+                        <a class="pill-link" href="{% url 'register' %}">Create Account</a>
+                        <a class="pill-link" href="#query-form">Send a Query</a>
+                    </div>
+
+                    <div class="hero-card">
+                        <div class="hero-card-grid">
+                            <div class="hero-stat">
+                                <strong>Budget view</strong>
+                                <span class="form-note">Track income, expenses, and savings in one place.</span>
+                            </div>
+                            <div class="hero-stat">
+                                <strong>Monthly reports</strong>
+                                <span class="form-note">Quick charts and history help you stay consistent.</span>
+                            </div>
+                            <div class="hero-stat">
+                                <strong>Fast login</strong>
+                                <span class="form-note">Get into your dashboard in a couple of clicks.</span>
+                            </div>
+                            <div class="hero-stat">
+                                <strong>Query support</strong>
+                                <span class="form-note">Use the form below to reach the project email directly.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-visual" aria-label="Expense tracker preview image">
+                    <div class="floating-badge">
+                        <strong>Built for practical expense tracking</strong>
+                        <span>Designed around the app flow already present in this project: dashboard, profile, records, and quick add-money actions.</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-title">What you get</h2>
+                        <p class="section-copy">The landing page reflects the project’s current features and keeps the path to login and registration obvious.</p>
+                    </div>
+                </div>
+                <div class="feature-grid">
+                    <article class="feature-card">
+                        <h3>Track spending</h3>
+                        <p>Record income and expenses, then compare them against your savings target from the dashboard.</p>
+                    </article>
+                    <article class="feature-card">
+                        <h3>Review history</h3>
+                        <p>Use the existing monthly, weekly, and yearly record views to spot habits and plan ahead.</p>
+                    </article>
+                    <article class="feature-card">
+                        <h3>Manage account</h3>
+                        <p>Login and signup links are available from the header and hero CTA buttons at any time.</p>
+                    </article>
+                </div>
+
+                <div class="image-grid">
+                    <div class="image-tile one" data-label="Travel and routine"></div>
+                    <div class="image-tile two" data-label="Savings and money"></div>
+                    <div class="image-tile three" data-label="Budget pressure"></div>
+                </div>
+                <div class="image-grid" style="margin-top:1rem;">
+                    <div class="image-tile" data-label="Workspace focus" style="background:linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.46)), url('https://www.slidegeeks.com/media/catalog/product/cache/1280x720/R/e/Revenue_And_Operation_Expenses_Comparison_Chart_Slides_PDF_Slide_1.jpg') center/cover no-repeat;"></div>
+                    <div class="image-tile" data-label="Cash planning" style="background:linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.46)), url('https://images.unsplash.com/photo-1554224154-22dec7ec8818?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;"></div>
+                    <div class="image-tile" data-label="Saving habits" style="background:linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.46)), url('https://communitybank.net/wp-content/uploads/2026/01/2025.12.19-CB-Monthly-Blog-January-Image-Asset-scaled-1-2048x1366.jpeg') center/cover no-repeat;"></div>
+                </div>
+            </section>
+
+            <section class="query-section" id="query-form">
+                <div class="query-wrap">
+                    <div class="query-panel">
+                        <h2>Submit your query</h2>
+                        <p>
+                            Send a question, feature request, or support note using this form. The backend will email the message to
+                            angothuadhisheshu@gmail.com when your SMTP settings are configured.
+                        </p>
+                        <p class="form-note">
+                            Fields marked here are enough to send the request: your name, email, and message. A subject is optional.
+                        </p>
+                    </div>
+
+                    <form class="query-form" method="post" action="{% url 'submit_query' %}">
+                        {% csrf_token %}
+                        <div class="field-group">
+                            <label for="name">Name</label>
+                            <input id="name" name="name" type="text" placeholder="Your full name" required>
+                        </div>
+                        <div class="field-group">
+                            <label for="email">Email</label>
+                            <input id="email" name="email" type="email" placeholder="Your email address" required>
+                        </div>
+                        <div class="field-group">
+                            <label for="subject">Subject</label>
+                            <input id="subject" name="subject" type="text" placeholder="What is this about?">
+                        </div>
+                        <div class="field-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" placeholder="Write your query here" required></textarea>
+                        </div>
+                        <div class="submit-row">
+                            <span class="form-note">You will be returned to the landing page after submission.</span>
+                            <button class="submit-btn" type="submit">Send Query</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+        <footer class="landing-footer">
+            <div class="landing-footer-inner">
+                <div class="landing-footer-grid">
+                <section>
+                    <h3>ExpenseTracker</h3>
+                    <p>Track income, control expenses, and stay focused on savings with a clear, lightweight dashboard built for everyday use.</p>
+                </section>
+                <section>
+                    <h3>Quick Links</h3>
+                    <div class="footer-links">
+                        <a href="{% url 'login' %}">Login</a>
+                        <a href="{% url 'register' %}">Create account</a>
+                        <a href="#query-form">Submit query</a>
+                    </div>
+                </section>
+                <section>
+                    <h3>Contact</h3>
+                    <p>Support email: angothuadhisheshu@gmail.com</p>
+                    <p>Use the query form above to send messages directly to the backend mail handler.</p>
+                </section>
+                </div>
+                <div class="footer-bottom">
+                    <span>Built for practical budgeting and daily expense tracking.</span>
+                    <span>&copy; 2026 ExpenseTracker</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

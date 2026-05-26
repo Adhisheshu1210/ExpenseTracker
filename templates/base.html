@@ -9,40 +9,160 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Page Title -  Admin</title>
+        <title>{% block title %}ExpenseTracker{% endblock title %}</title>
         {% comment %} <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}"> {% endcomment %}
         <link rel="stylesheet" type="text/css" href="{% static 'login1.css' %}">
         <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Text:wght@700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
+        <style>
+            body {
+                margin: 0;
+                font-family: 'Inter', sans-serif;
+                background:
+                    radial-gradient(circle at top left, rgba(99, 214, 200, 0.14), transparent 30%),
+                    linear-gradient(180deg, #08111b 0%, #0e1826 100%);
+                color: #eff5ff;
+            }
+
+            .site-shell {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .site-header,
+            .site-footer {
+                width: 100%;
+                background: rgba(7, 13, 21, 0.74);
+                backdrop-filter: blur(18px);
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .site-header {
+                position: sticky;
+                top: 0;
+                z-index: 20;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .site-footer {
+                margin-top: auto;
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+                color: rgba(239, 245, 255, 0.7);
+            }
+
+            .site-container {
+                width: min(1180px, calc(100% - 2rem));
+                margin: 0 auto;
+            }
+
+            .site-nav {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                padding: 0.85rem 0;
+                flex-wrap: wrap;
+            }
+
+            .site-brand {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.75rem;
+                font-weight: 800;
+                letter-spacing: 0.02em;
+                color: #eff5ff;
+                text-decoration: none;
+            }
+
+            .site-mark {
+                width: 2.5rem;
+                height: 2.5rem;
+                border-radius: 0.85rem;
+                display: grid;
+                place-items: center;
+                background: linear-gradient(135deg, #ffb347, #ff7c5c);
+                color: #10161f;
+                box-shadow: 0 12px 28px rgba(255, 179, 71, 0.24);
+            }
+
+            .site-links {
+                display: flex;
+                align-items: center;
+                gap: 0.7rem;
+                flex-wrap: wrap;
+            }
+
+            .site-link {
+                color: #eff5ff;
+                text-decoration: none;
+                font-weight: 600;
+                padding: 0.7rem 1rem;
+                border-radius: 999px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                background: rgba(255, 255, 255, 0.04);
+            }
+
+            .site-link.primary {
+                background: linear-gradient(135deg, #63d6c8, #8be2d8);
+                color: #071018;
+                border-color: transparent;
+            }
+
+            .page-card {
+                width: min(1120px, calc(100% - 2rem));
+                margin: 2rem auto;
+                padding: 1.25rem;
+                border-radius: 1.75rem;
+                background: rgba(9, 16, 27, 0.86);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+                backdrop-filter: blur(18px);
+            }
+
+            .messages {
+                width: min(1180px, calc(100% - 2rem));
+                margin: 1rem auto 0;
+            }
+        </style>
     </head>
     <body>
-    <div class="messages" id="alert-message">
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} mb-0 alert-dismissible fade show" role="alert">
-    <strong>Message :</strong>{{ message }}
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-    </button>
-    </div>
-    {% endfor %} 
-    </div>
-    {% block body %}
-    {% endblock body %}
-        <div id="layoutAuthentication_footer">
-                <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            {% comment %} <div class="text-muted">Copyright &copy; Your Website 2023</div>
-                            <div>
-                                <a href="#">Privacy Policy</a>
-                                &middot;
-                                <a href="#">Terms &amp; Conditions</a>
-                            </div>
-                        </div>{% endcomment %}
+        <div class="site-shell">
+            <header class="site-header">
+                <div class="site-container site-nav">
+                    <a class="site-brand" href="{% url 'home' %}">
+                        <span class="site-mark">ET</span>
+                        <span>ExpenseTracker</span>
+                    </a>
+                    <div class="site-links">
+                        <a class="site-link" href="{% url 'login' %}">Login</a>
+                        <a class="site-link primary" href="{% url 'register' %}">Sign Up</a>
                     </div>
-                </footer>
-            
+                </div>
+            </header>
+
+            <div class="messages" id="alert-message">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mb-0 alert-dismissible fade show" role="alert">
+                    <strong>Message :</strong>{{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+
+            <main class="page-card">
+                {% block body %}{% endblock body %}
+            </main>
+
+            <footer class="site-footer">
+                <div class="site-container py-4 d-flex align-items-center justify-content-between small flex-wrap gap-2">
+                    <div>ExpenseTracker</div>
+                    <div>Track income, spending, and savings with clarity.</div>
+                </div>
+            </footer>
         </div>
         <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
         <script type="text/javascript"> 

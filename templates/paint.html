@@ -1,0 +1,187 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paint — ExpenseTracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
+  <style>
+    :root{--bg:#07111b;--panel:rgba(9,16,27,.88);--panel-border:rgba(255,255,255,.08);--text:#eff5ff;--muted:rgba(239,245,255,.72);--accent:#63d6c8;--accent2:#ffb347;--danger:#ff7c5c}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Inter',sans-serif;background:radial-gradient(circle at top left, rgba(99,214,200,.16), transparent 28%),radial-gradient(circle at top right, rgba(255,179,71,.12), transparent 25%),linear-gradient(180deg,#061018 0%,#0c1726 100%);color:var(--text);min-height:100vh}
+    .shell{max-width:1320px;margin:0 auto;padding:24px}
+    .hero{background:linear-gradient(135deg,rgba(99,214,200,.12),rgba(255,179,71,.10));border:1px solid rgba(255,255,255,.08);border-radius:26px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.28)}
+    .hero-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800}
+    .brand-mark{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent2),#ff7c5c);color:#10161f;box-shadow:0 12px 28px rgba(255,179,71,.24)}
+    .hero h1{margin:.85rem 0 .25rem;font-weight:800;letter-spacing:-.03em}
+    .hero p{margin:0;color:var(--muted);max-width:68ch}
+    .actions{display:flex;gap:.6rem;flex-wrap:wrap}
+    .btn-soft{border-radius:999px;padding:.7rem 1rem;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:var(--text)}
+    .btn-soft:hover{background:rgba(255,255,255,.08);color:var(--text);text-decoration:none}
+
+    .grid{margin-top:22px;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+    @media(max-width:980px){.grid{grid-template-columns:1fr}}
+    .card-panel{background:var(--panel);border:1px solid var(--panel-border);border-radius:24px;box-shadow:0 24px 70px rgba(0,0,0,.35);overflow:hidden}
+    .card-head{padding:18px 18px 0}
+    .card-head h2{margin:0;font-size:1.1rem;font-weight:800}
+    .card-head .sub{color:var(--muted);font-size:.92rem;margin-top:.25rem}
+    .toolbar{display:flex;gap:.55rem;flex-wrap:wrap;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .tool{border:0;border-radius:12px;padding:.65rem .9rem;background:rgba(255,255,255,.05);color:var(--text)}
+    .tool:hover{background:rgba(255,255,255,.08)}
+    .canvas-shell{padding:18px}
+    canvas{width:100%;height:auto;aspect-ratio: 16 / 10; border-radius:20px;background:#fff;display:block;cursor:crosshair;border:1px solid rgba(255,255,255,.08)}
+    .savebar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:16px 18px 18px;border-top:1px solid rgba(255,255,255,.08)}
+    .savebtn{border:0;border-radius:14px;padding:.8rem 1.1rem;font-weight:700;background:linear-gradient(135deg,var(--accent),#8be2d8);color:#071018}
+    .hint{color:var(--muted);font-size:.92rem}
+    .note-stat{padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);margin:0 18px 12px}
+    .note-stat strong{display:block;font-size:1.2rem}
+    .note-stat span{color:var(--muted);font-size:.92rem}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="hero">
+      <div class="hero-top">
+        <div class="brand">
+          <div class="brand-mark"><i class="fas fa-paint-brush"></i></div>
+          <div>
+            <div style="font-size:.92rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">Dashboard tool</div>
+            <div style="font-size:1.05rem">Paint</div>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="btn-soft" href="{% url 'index' %}"><i class="fas fa-tachometer-alt mr-1"></i>Dashboard</a>
+          <a class="btn-soft" href="{% url 'notepad' %}"><i class="fas fa-sticky-note mr-1"></i>Notepad</a>
+          <a class="btn-soft" href="{% url 'settings' %}"><i class="fas fa-cog mr-1"></i>Settings</a>
+        </div>
+      </div>
+      <h1>Sketch ideas, layouts, or quick visual notes</h1>
+      <p>A clean drawing area that matches the dashboard theme. Draw with your mouse or touch input, then export the canvas as a PNG file.</p>
+    </div>
+
+    <div class="grid">
+      <form class="card-panel" id="paintForm" method="post" action="{% url 'save_paint' %}">
+        {% csrf_token %}
+        <div class="card-head">
+          <h2>Canvas</h2>
+          <div class="sub">Use the controls above to reset or save your sketch</div>
+        </div>
+        <div class="toolbar">
+          <button class="tool" type="button" id="clearButton"><i class="fas fa-eraser mr-1"></i>Clear</button>
+          <button class="tool" type="submit" id="saveButton"><i class="fas fa-save mr-1"></i>Save to history</button>
+          <button class="tool" type="button" id="downloadButton"><i class="fas fa-download mr-1"></i>Save PNG</button>
+        </div>
+        <div class="canvas-shell">
+          <canvas id="paintCanvas" width="1200" height="750"></canvas>
+        </div>
+        <input type="hidden" name="image_data" id="imageDataInput">
+        <div class="savebar">
+          <div class="hint">Tip: drag to draw. The brush uses a rounded black stroke by default.</div>
+          <a href="{% url 'index' %}" class="btn-soft">Back to dashboard</a>
+        </div>
+      </form>
+
+      <aside class="card-panel">
+        <div class="card-head">
+          <h2>Quick shortcuts</h2>
+          <div class="sub">Dashboard tools in the same visual language</div>
+        </div>
+        <div style="padding-top:18px">
+          <div class="note-stat"><strong>Notepad</strong><span>Write notes and export them as text.</span></div>
+          <div class="note-stat"><strong>Paint</strong><span>Sketch ideas and save as PNG.</span></div>
+          <div class="note-stat"><strong>Dashboard</strong><span>Go back to expenses and reports.</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const canvas = document.getElementById('paintCanvas');
+      const context = canvas.getContext('2d');
+      const paintForm = document.getElementById('paintForm');
+      const saveButton = document.getElementById('saveButton');
+      const downloadButton = document.getElementById('downloadButton');
+      const clearButton = document.getElementById('clearButton');
+      const imageDataInput = document.getElementById('imageDataInput');
+      const initialImageUrl = "{{ initial_image_url|default:''|escapejs }}";
+
+      let painting = false;
+      let lastX = 0;
+      let lastY = 0;
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
+      }
+
+      function startPosition(e) {
+        painting = true;
+        const pos = getPos(e);
+        lastX = pos.x;
+        lastY = pos.y;
+      }
+
+      function endPosition() {
+        painting = false;
+        context.beginPath();
+      }
+
+      function draw(e) {
+        if (!painting) return;
+        e.preventDefault();
+        const pos = getPos(e);
+        context.lineWidth = 5;
+        context.lineCap = 'round';
+        context.strokeStyle = '#10161f';
+        context.beginPath();
+        context.moveTo(lastX, lastY);
+        context.lineTo(pos.x, pos.y);
+        context.stroke();
+        lastX = pos.x;
+        lastY = pos.y;
+      }
+
+      canvas.addEventListener('mousedown', startPosition);
+      canvas.addEventListener('mouseup', endPosition);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseleave', endPosition);
+      canvas.addEventListener('touchstart', startPosition, { passive: false });
+      canvas.addEventListener('touchend', endPosition);
+      canvas.addEventListener('touchmove', draw, { passive: false });
+
+      clearButton.addEventListener('click', function () {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+      });
+
+      if (initialImageUrl) {
+        const image = new Image();
+        image.onload = function () {
+          context.fillStyle = '#ffffff';
+          context.fillRect(0, 0, canvas.width, canvas.height);
+          context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        };
+        image.src = initialImageUrl;
+      }
+
+      paintForm.addEventListener('submit', function (event) {
+        imageDataInput.value = canvas.toDataURL('image/png');
+      });
+
+      downloadButton.addEventListener('click', function () {
+        const dataURL = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = dataURL;
+        a.download = 'drawing.png';
+        a.click();
+      });
+    });
+  </script>
+</body>
+</html>

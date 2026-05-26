@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% block title %}ExpenseTracker | Login{% endblock title %}
+{% block body %}
+<style>
+    .auth-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+        gap: 1.25rem;
+        align-items: stretch;
+    }
+
+    .auth-visual {
+        position: relative;
+        min-height: 560px;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        background:
+            linear-gradient(180deg, rgba(7, 13, 21, 0.1), rgba(7, 13, 21, 0.72)),
+            url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .auth-copy {
+        position: absolute;
+        inset: auto 1rem 1rem 1rem;
+        padding: 1rem 1.1rem;
+        border-radius: 1.2rem;
+        background: rgba(7, 13, 21, 0.75);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .auth-copy h1 {
+        margin: 0 0 0.5rem;
+        font-size: 1.8rem;
+    }
+
+    .auth-copy p {
+        margin: 0;
+        color: rgba(239, 245, 255, 0.72);
+        line-height: 1.7;
+    }
+
+    .auth-card {
+        padding: 1.3rem;
+        border-radius: 1.5rem;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .auth-card h2 {
+        margin: 0;
+        font-size: 2rem;
+        letter-spacing: -0.02em;
+    }
+
+    .auth-card .subtext {
+        margin: 0.45rem 0 1.2rem;
+        color: rgba(239, 245, 255, 0.72);
+        line-height: 1.7;
+    }
+
+    .auth-form {
+        display: grid;
+        gap: 0.95rem;
+    }
+
+    .auth-field {
+        display: grid;
+        gap: 0.45rem;
+    }
+
+    .auth-field label {
+        font-size: 0.92rem;
+        color: rgba(239, 245, 255, 0.9);
+    }
+
+    .auth-field input {
+        width: 100%;
+        padding: 0.95rem 1rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        color: #eff5ff;
+        outline: none;
+    }
+
+    .auth-field input:focus {
+        border-color: rgba(99, 214, 200, 0.6);
+        box-shadow: 0 0 0 3px rgba(99, 214, 200, 0.14);
+    }
+
+    .auth-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.9rem;
+        flex-wrap: wrap;
+    }
+
+    .auth-button {
+        border: none;
+        border-radius: 999px;
+        padding: 0.95rem 1.35rem;
+        background: linear-gradient(135deg, #63d6c8, #8be2d8);
+        color: #071018;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .auth-links {
+        display: grid;
+        gap: 0.65rem;
+        margin-top: 1rem;
+        color: rgba(239, 245, 255, 0.8);
+    }
+
+    .auth-links a {
+        color: #8be2d8;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    @media (max-width: 960px) {
+        .auth-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .auth-visual {
+            min-height: 280px;
+        }
+    }
+</style>
+
+<div class="auth-grid">
+    <div class="auth-visual">
+        <div class="auth-copy">
+            <h1>Welcome back.</h1>
+            <p>Login to review your expenses, monitor savings, and continue from the same dashboard you already use in this project.</p>
+        </div>
+    </div>
+
+    <div class="auth-card">
+        <h2>Expense Tracker Login</h2>
+        <p class="subtext">Use your credentials to open the dashboard and continue managing your money.</p>
+
+        <form class="auth-form" action="{% url 'handlelogin' %}" method="post">
+            {% csrf_token %}
+            <div class="auth-field">
+                <label for="loginemail">Email</label>
+                <input id="loginemail" name="loginemail" type="email" placeholder="Enter registered Gmail address" required />
+            </div>
+            <div class="auth-field">
+                <label for="loginpassword1">Password</label>
+                <input id="loginpassword1" name="loginpassword1" type="password" placeholder="Enter password" required />
+            </div>
+            <div class="auth-row">
+                <label style="display:flex;gap:0.5rem;align-items:center;color:rgba(239,245,255,0.76);">
+                    <input type="checkbox" id="rememberPasswordCheck" />
+                    Remember password
+                </label>
+                <a href="{% url 'forgot_password' %}">Forgot Password?</a>
+            </div>
+            <div class="auth-row">
+                <button class="auth-button" type="submit">Login</button>
+                <span style="color:rgba(239,245,255,0.7);">New here? <a href="{% url 'register' %}">Create an account</a></span>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock body %}

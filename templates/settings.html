@@ -1,0 +1,272 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Settings — ExpenseTracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="" crossorigin="anonymous" />
+  <style>
+    :root{--bg:#0b161c;--card:#0f1c22;--muted:#98a6b3;--accent:#63d6c8;--glass:rgba(255,255,255,0.03)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#eaf2f6;background:linear-gradient(180deg,#071018 0%,#07181f 100%);-webkit-font-smoothing:antialiased}
+    .container{max-width:1140px;margin:20px auto;padding:22px}
+    .header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-mark{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#ffb347,#ff7c5c);color:#071018;font-weight:800}
+    h1{font-size:20px;margin:0}
+    .sub{color:var(--muted);font-size:13px}
+
+    .layout{display:grid;grid-template-columns:320px 1fr;gap:22px;align-items:start}
+    @media(max-width:980px){.layout{grid-template-columns:1fr}}
+
+    .card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 10px 30px rgba(2,6,10,0.6);border:1px solid rgba(255,255,255,0.03)}
+    .profile{display:flex;align-items:center;gap:14px}
+    .avatar{width:84px;height:84px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:linear-gradient(135deg,#63d6c8,#8be2d8);color:#071018;font-weight:700;font-size:28px}
+    .profile-info{flex:1}
+    .muted{color:var(--muted);font-size:13px}
+
+    .section{margin-top:16px}
+    .section h3{margin:0 0 10px 0;font-size:15px}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media(max-width:560px){.grid-2{grid-template-columns:1fr}}
+    label{display:block;font-weight:600;font-size:13px;margin-bottom:6px}
+    input[type="text"],input[type="email"],select,input[type="number"],textarea{width:100%;padding:11px;border-radius:10px;background:var(--glass);border:1px solid rgba(255,255,255,0.04);color:#eaf2f6}
+    .field{margin-bottom:12px}
+    .toggle{display:inline-flex;align-items:center;gap:10px}
+    .toggle input{display:none}
+    .switch{width:48px;height:28px;border-radius:20px;background:#23323a;position:relative;cursor:pointer}
+    .knob{width:22px;height:22px;border-radius:50%;background:white;position:absolute;top:3px;left:3px;transition:all .18s ease}
+    input:checked + .switch{background:linear-gradient(135deg,var(--accent),#8be2d8)}
+    input:checked + .switch .knob{left:23px}
+
+    .small-muted{font-size:12px;color:var(--muted)}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{padding:10px 14px;border-radius:10px;border:0;background:linear-gradient(135deg,#63d6c8,#8be2d8);color:#071018;font-weight:700;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#eaf2f6}
+    .muted-card{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px}
+
+    .list{display:grid;gap:8px}
+    .list-item{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02)}
+    .help{font-size:13px;color:var(--muted)}
+
+    footer{margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <div class="brand-mark">ET</div>
+        <div>
+          <h1>Settings</h1>
+          <div class="sub">Manage your account, preferences and security</div>
+        </div>
+      </div>
+      <div class="actions">
+        <a href="{% url 'index' %}" class="btn ghost">Dashboard</a>
+        <a href="{% url 'handleLogout' %}" class="btn ghost">Logout</a>
+      </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" action="{% url 'settings' %}">
+      {% csrf_token %}
+      <div class="layout">
+        <aside>
+          <div class="card">
+            <div class="profile">
+              <div class="avatar">
+                {% if profile and profile.image %}
+                  <img src="{{ profile.image.url }}" alt="avatar" style="width:100%;height:100%;object-fit:cover">
+                {% else %}
+                  {{ user.first_name|default:user.username|slice:':1'|upper }}
+                {% endif %}
+              </div>
+              <div class="profile-info">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="font-weight:700">{{ user.first_name }} {{ user.last_name }}</div>
+                </div>
+                <div class="muted">{{ user.email }}</div>
+              </div>
+            </div>
+
+            <div class="section">
+              <h3>Account</h3>
+              <div class="field"><label>First name</label><input type="text" name="fname" value="{{ user.first_name }}"></div>
+              <div class="field"><label>Last name</label><input type="text" name="lname" value="{{ user.last_name }}"></div>
+              <div class="field"><label>Email</label><input type="email" name="email" value="{{ user.email }}"></div>
+              <div class="field"><label>Profile photo</label><input type="file" id="imageInput" name="image" accept="image/*"></div>
+              <div class="field">
+                <div class="small-muted">Preview</div>
+                <div style="margin-top:8px;width:84px;height:84px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,0.02);display:grid;place-items:center">
+                  <img id="imagePreview" src="{% if profile and profile.image %}{{ profile.image.url }}{% endif %}" alt="preview" style="width:100%;height:100%;object-fit:cover;display:block">
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <h3>Security</h3>
+              <div class="list">
+                  <div class="list-item"><div>
+                    <div style="font-weight:600">Current login</div>
+                    <div class="small-muted">Latest saved session details</div>
+                  </div>
+                  <div>
+                    <a class="btn ghost" href="{% url 'login_history' %}"><i class="fas fa-clock"></i>&nbsp;View</a>
+                  </div></div>
+
+                <div class="list-item"><div>
+                  <div style="font-weight:600">App PIN</div>
+                  <div class="small-muted">Enable a 4-digit PIN for quick access</div>
+                </div>
+                <div class="toggle">
+                  <input id="pin" type="checkbox" name="pin_enabled" {% if profile.pin_enabled %}checked{% endif %} />
+                  <label for="pin" class="switch"><span class="knob"></span></label>
+                </div></div>
+
+                <div class="list-item"><div>
+                  <div style="font-weight:600">Biometric login</div>
+                  <div class="small-muted">Use fingerprint or face unlock where available</div>
+                </div>
+                <div class="toggle">
+                  <input id="bio" type="checkbox" name="biometric_enabled" {% if profile.biometric_enabled %}checked{% endif %} />
+                  <label for="bio" class="switch"><span class="knob"></span></label>
+                </div></div>
+
+                <div class="list-item"><div>
+                  <div style="font-weight:600">Export data</div>
+                  <div class="small-muted">Download a CSV of all your transactions</div>
+                </div>
+                <div>
+                  <a class="btn ghost" href="{% url 'export_expenses_csv' %}"><i class="fas fa-file-csv"></i>&nbsp;CSV</a>
+                </div></div>
+
+                <div class="list-item"><div>
+                  <div style="font-weight:600">Login history</div>
+                  <div class="small-muted">View login time, date, and IP address details</div>
+                </div>
+                <div>
+                  <a class="btn ghost" href="{% url 'login_history' %}"><i class="fas fa-history"></i>&nbsp;Open</a>
+                </div></div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <h3 style="margin-top:0">Help & Support</h3>
+            <div class="muted-card">
+              <div class="help">Need help? Visit <a href="#" style="color:var(--accent)">Support Center</a> or contact us at support@expensetracker.local</div>
+            </div>
+            <div style="margin-top:12px" class="help small-muted">Privacy Policy • Terms</div>
+          </div>
+        </aside>
+
+        <main>
+          <div class="card">
+            <h3>Preferences</h3>
+            <div class="section">
+              <div class="field"><label>Currency</label>
+                <select name="currency">
+                  <option value="USD" {% if profile.currency == 'USD' %}selected{% endif %}>USD — $</option>
+                  <option value="EUR" {% if profile.currency == 'EUR' %}selected{% endif %}>EUR — €</option>
+                  <option value="GBP" {% if profile.currency == 'GBP' %}selected{% endif %}>GBP — £</option>
+                  <option value="INR" {% if profile.currency == 'INR' %}selected{% endif %}>INR — ₹</option>
+                </select>
+              </div>
+
+              <div class="field"><label>Theme</label>
+                <div class="row">
+                  <div class="toggle">
+                    <input id="dark" type="checkbox" name="dark_mode" {% if profile.dark_mode %}checked{% endif %} />
+                    <label for="dark" class="switch"><span class="knob"></span></label>
+                  </div>
+                  <div class="small-muted">Enable dark mode for the app</div>
+                </div>
+              </div>
+
+              <div class="field"><label>Budget limit</label>
+                <input type="number" name="budget_limit" placeholder="Monthly budget" value="{% if profile.budget_limit %}{{ profile.budget_limit }}{% endif %}">
+                <div class="small-muted">Set a monthly spending limit; we'll notify you when you approach it.</div>
+              </div>
+
+              <div class="field"><label>Notifications & reminders</label>
+                <div style="display:flex;gap:12px;align-items:center">
+                  <div class="toggle">
+                    <input id="notify" type="checkbox" name="notifications_enabled" {% if profile.notifications_enabled %}checked{% endif %} />
+                    <label for="notify" class="switch"><span class="knob"></span></label>
+                  </div>
+                  <div style="flex:1">
+                    <div class="small-muted">Push notifications for budget alerts and reminders</div>
+                    <input type="text" name="reminders_time" value="{{ profile.reminders_time|default:'' }}" placeholder="Daily at 9:00 AM">
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="section">
+              <h3>Categories</h3>
+              <div class="field">
+                <label>Manage categories (comma separated)</label>
+                <textarea name="categories" rows="3" placeholder="Food, Travel, Shopping">{{ profile.categories }}</textarea>
+                <div class="small-muted">Add or remove custom categories used for expense tagging.</div>
+              </div>
+            </div>
+
+            <div class="section">
+              <h3>Backup & Data</h3>
+              <div class="list">
+                <div class="list-item"><div>
+                  <div style="font-weight:600">Automatic backup</div>
+                  <div class="small-muted">Enable encrypted backups to your cloud account</div>
+                </div>
+                <div class="toggle">
+                  <input id="backup" type="checkbox" name="backup_enabled" {% if profile.backup_enabled %}checked{% endif %} />
+                  <label for="backup" class="switch"><span class="knob"></span></label>
+                </div></div>
+
+                <div class="list-item"><div>
+                  <div style="font-weight:600">Last backup</div>
+                  <div class="small-muted">{% if profile.last_backup %}{{ profile.last_backup }}{% else %}No backup yet{% endif %}</div>
+                </div>
+                <div>
+                  <button type="button" class="btn ghost">Sync now</button>
+                </div></div>
+
+              </div>
+            </div>
+
+            <footer>
+              <div class="help">Export, backup or manage privacy settings below.</div>
+              <div class="actions">
+                <button type="submit" class="btn">Save changes</button>
+                <a href="{% url 'export_expenses_csv' %}" class="btn ghost">Export CSV</a>
+                <a href="#" class="btn ghost">Privacy Policy</a>
+              </div>
+            </footer>
+
+          </div>
+
+        </main>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Image preview
+    const input = document.getElementById('imageInput');
+    const preview = document.getElementById('imagePreview');
+    if (input) {
+      input.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+        preview.src = url;
+      });
+    }
+  </script>
+</body>
+</html>

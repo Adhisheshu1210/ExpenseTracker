@@ -1,0 +1,222 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>ExpenseTracker | History</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'home.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'addmoney.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
+  <style>
+    :root { --panel: rgba(9,16,27,.88); --panel-border: rgba(255,255,255,.08); --text:#eff5ff; --muted:rgba(239,245,255,.72); --accent:#63d6c8; --accent2:#ffb347; }
+    body { margin:0; font-family:'Inter',sans-serif; background:linear-gradient(180deg,#061018 0%,#0c1726 100%); color:var(--text); }
+    .topbar{position:sticky;top:0;z-index:20;backdrop-filter:blur(18px);background:rgba(7,13,21,.72);border-bottom:1px solid rgba(255,255,255,.08)}
+    .topbar-inner{max-width:1500px;margin:0 auto;padding:.9rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+    .brand{display:inline-flex;align-items:center;gap:.75rem;color:var(--text);font-weight:800;text-decoration:none}.brand-mark{width:2.5rem;height:2.5rem;border-radius:.9rem;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent2),#ff7c5c);color:#10161f}
+    .sidebar-toggle{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:var(--text);width:44px;height:44px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center}
+    .top-actions{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}.top-actions .btn{border-radius:999px}.profile-menu .dropdown-toggle::after{display:none}.profile-chip{display:inline-flex;align-items:center;gap:.7rem;padding:.55rem .8rem;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--text)}.profile-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,var(--accent),#8be2d8);color:#071018}.dropdown-menu.dashboard-menu{background:rgba(7,13,21,.96);border:1px solid rgba(255,255,255,.1);border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.35)}.dropdown-menu.dashboard-menu .dropdown-item{color:var(--text)}.dropdown-menu.dashboard-menu .dropdown-item:hover{background:rgba(255,255,255,.06)}
+    .layout{max-width:1500px;margin:0 auto;padding:1.25rem;display:grid;grid-template-columns:290px minmax(0,1fr);gap:1.25rem}.layout.sidebar-collapsed{grid-template-columns:1fr}.layout.sidebar-collapsed .sidebar{display:none}
+    .sidebar,.panel{background:var(--panel);border:1px solid var(--panel-border);border-radius:28px;box-shadow:0 24px 70px rgba(0,0,0,.35);overflow:hidden}.sidebar{position:sticky;top:96px;height:fit-content}.sidebar-hero{padding:1.3rem;background:linear-gradient(135deg,rgba(99,214,200,.16),rgba(255,179,71,.12));border-bottom:1px solid rgba(255,255,255,.08)}.sidebar-hero h2{margin:0;font-size:1.15rem;font-weight:800}.sidebar-hero p{margin:.35rem 0 0;color:var(--muted)}.navlist{padding:.6rem;display:grid;gap:.35rem}.navlist a{color:var(--text);text-decoration:none;padding:.9rem 1rem;border-radius:16px;display:flex;align-items:center;gap:.8rem;background:rgba(255,255,255,.03);border:1px solid transparent}.navlist a:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08)}.sidebar-footer{padding:1rem 1.15rem 1.2rem;border-top:1px solid rgba(255,255,255,.08);color:var(--muted)}
+    .panel{padding:1.25rem}.hero{padding:1.5rem;border-radius:24px;background:linear-gradient(135deg,rgba(99,214,200,.12),rgba(255,179,71,.10));border:1px solid rgba(255,255,255,.08)}.hero h1{margin:0;font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-0.03em}.hero p{margin:.75rem 0 0;color:var(--muted);max-width:68ch;line-height:1.7}.content-grid{margin-top:1.25rem;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);gap:1.25rem}.section-card{border-radius:24px;padding:1.15rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}.section-title{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem}.section-title h2{margin:0;font-size:1.15rem;font-weight:800}.table{color:var(--text);margin-bottom:0}.table td,.table th{border-color:rgba(255,255,255,.08);vertical-align:middle}.table thead th{border-top:0;color:var(--muted);font-size:.82rem;letter-spacing:.04em;text-transform:uppercase}.badge-income{background:rgba(99,214,200,.16);color:#8be2d8}.badge-expense{background:rgba(255,124,92,.16);color:#ff9a86}.badge-tool{background:rgba(255,179,71,.16);color:#ffd48a}.mini-item{padding:.95rem 1rem;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}.mini-item strong{display:block}.mini-item span{color:var(--muted);font-size:.92rem}.empty-state{padding:2rem 1rem;text-align:center;color:var(--muted)}.tool-preview{max-width:88px;border-radius:10px;border:1px solid rgba(255,255,255,.08)}
+    @media (max-width:1200px){.layout{grid-template-columns:1fr}.sidebar{position:static}.content-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <button class="sidebar-toggle" type="button" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+        <a class="brand" href="{% url 'home' %}"><span class="brand-mark">ET</span><span>ExpenseTracker</span></a>
+      </div>
+      <div class="top-actions">
+        <a class="btn btn-outline-light btn-sm" href="{% url 'index' %}"><i class="fas fa-tachometer-alt mr-1"></i>Dashboard</a>
+        <a class="btn btn-info btn-sm" href="{% url 'addmoney' %}"><i class="fas fa-plus mr-1"></i>Add Entry</a>
+        <div class="dropdown profile-menu">
+          <a class="profile-chip dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+            <span class="profile-avatar">{{ request.user.first_name|default:request.user.username|slice:':1'|upper }}</span>
+            <span class="d-none d-sm-inline">{{ request.user.first_name }} {{ request.user.last_name }}</span>
+            <i class="fas fa-chevron-down small"></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right dashboard-menu">
+            <a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user-circle mr-2"></i>Profile</a>
+            <a class="dropdown-item" href="{% url 'settings' %}"><i class="fas fa-cog mr-2"></i>Settings</a>
+            <a class="dropdown-item" href="{% url 'handleLogout' %}"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout" id="dashboardLayout">
+    <aside class="sidebar">
+      <div class="sidebar-hero">
+        <h2>{{ request.user.first_name }} {{ request.user.last_name }}</h2>
+        <p>Financial history and quick actions.</p>
+      </div>
+      <div class="navlist">
+        <a href="{% url 'index' %}"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+        <a href="{% url 'profile' %}"><i class="fas fa-user-circle"></i>Profile</a>
+        <a href="{% url 'weekly' %}"><i class="fas fa-calendar-week"></i>Weekly record</a>
+        <a href="{% url 'stats' %}"><i class="fas fa-chart-pie"></i>Monthly record</a>
+        <a href="{% url 'info' %}"><i class="fas fa-chart-line"></i>Yearly record</a>
+        <a href="{% url 'tables' %}"><i class="fas fa-table"></i>History</a>
+        <a href="{% url 'settings' %}"><i class="fas fa-cog"></i>Settings</a>
+        <a href="{% url 'handleLogout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a>
+      </div>
+      <div class="sidebar-footer">
+        <div class="d-flex justify-content-between"><span>Total entries</span><strong>{{ history_count }}</strong></div>
+        <div class="d-flex justify-content-between mt-1"><span>Finance</span><strong>{{ finance_count }}</strong></div>
+        <div class="d-flex justify-content-between mt-1"><span>Notepad</span><strong>{{ notepad_count }}</strong></div>
+        <div class="d-flex justify-content-between mt-1"><span>Paint</span><strong>{{ paint_count }}</strong></div>
+      </div>
+    </aside>
+
+    <main class="panel">
+      <section class="hero d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+        <div>
+          <div class="muted text-uppercase small mb-2">Expense history</div>
+          <h1>All transactions and tool saves in one place</h1>
+          <p>
+            {% if fromdate or todate %}
+              Filtered view for {{ fromdate|default:'all dates' }}{% if todate %} to {{ todate }}{% endif %}.
+            {% else %}
+              Review income, expenses, notepad saves, and paint sketches together.
+            {% endif %}
+          </p>
+        </div>
+        <div class="top-actions">
+          <a href="{% url 'index' %}" class="btn btn-outline-light btn-sm">Dashboard</a>
+          <a href="{% url 'addmoney' %}" class="btn btn-info btn-sm">Add Entry</a>
+          <a href="{% url 'notepad' %}" class="btn btn-outline-warning btn-sm">Notepad</a>
+          <a href="{% url 'paint' %}" class="btn btn-outline-success btn-sm">Paint</a>
+        </div>
+      </section>
+
+      <div class="section-card mt-3" style="padding: 1rem 1.15rem;">
+        <div class="section-title mb-0">
+          <h2>Filter history</h2>
+          <div class="d-flex flex-wrap gap-2">
+            <button class="btn btn-light btn-sm history-filter active" type="button" data-target="all">All</button>
+            <button class="btn btn-outline-light btn-sm history-filter" type="button" data-target="finance">Finance</button>
+            <button class="btn btn-outline-light btn-sm history-filter" type="button" data-target="notepad">Notepad</button>
+            <button class="btn btn-outline-light btn-sm history-filter" type="button" data-target="paint">Paint</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <section class="section-card table-responsive mb-3 history-section" data-section="finance">
+          <div class="section-title"><h2>Finance history</h2><span class="badge badge-tool px-3 py-2">{{ finance_count }}</span></div>
+          <table class="table table-hover">
+            <thead>
+              <tr><th>Type</th><th>Category</th><th>Amount</th><th>Date</th><th class="text-right">Actions</th></tr>
+            </thead>
+            <tbody>
+              {% for item in finance_history %}
+                <tr>
+                  <td><span class="badge {% if item.add_money == 'Income' %}badge-income{% else %}badge-expense{% endif %} px-3 py-2">{{ item.add_money }}</span></td>
+                  <td>{{ item.Category }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ item.Date }}</td>
+                  <td class="text-right">
+                    <a href="{% url 'expense_edit' item.id %}" class="btn btn-success btn-sm">Edit</a>
+                    <a href="{% url 'expense_delete' item.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this transaction permanently?');">Delete</a>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="5" class="text-center empty-state">No finance entries yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section-card table-responsive mb-3 history-section" data-section="notepad">
+          <div class="section-title"><h2>Notepad history</h2><span class="badge badge-tool px-3 py-2">{{ notepad_count }}</span></div>
+          <table class="table table-hover">
+            <thead>
+              <tr><th>Note</th><th>Preview</th><th>Date</th><th class="text-right">Action</th></tr>
+            </thead>
+            <tbody>
+              {% for item in notepad_history %}
+                <tr>
+                  <td><span class="badge badge-tool px-3 py-2">Notepad</span></td>
+                  <td><strong>{{ item.title }}</strong><div class="small text-muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px;">{{ item.content }}</div></td>
+                  <td>{{ item.created_at }}</td>
+                  <td class="text-right">
+                    <a href="{% url 'notepad' %}?history_id={{ item.id }}" class="btn btn-outline-light btn-sm">Open</a>
+                    <a href="{% url 'tool_history_delete' item.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this note permanently?');">Delete</a>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="4" class="text-center empty-state">No notes saved yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </section>
+
+        <section class="section-card table-responsive history-section" data-section="paint">
+          <div class="section-title"><h2>Paint history</h2><span class="badge badge-tool px-3 py-2">{{ paint_count }}</span></div>
+          <table class="table table-hover">
+            <thead>
+              <tr><th>Drawing</th><th>Preview</th><th>Date</th><th class="text-right">Action</th></tr>
+            </thead>
+            <tbody>
+              {% for item in paint_history %}
+                <tr>
+                  <td><span class="badge badge-tool px-3 py-2">Paint</span></td>
+                  <td>{% if item.image %}<img class="tool-preview" src="{{ item.image.url }}" alt="drawing">{% else %}-{% endif %}</td>
+                  <td>{{ item.created_at }}</td>
+                  <td class="text-right">
+                    <a href="{% url 'paint' %}?history_id={{ item.id }}" class="btn btn-outline-light btn-sm">Open</a>
+                    <a href="{% url 'tool_history_delete' item.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this drawing permanently?');">Delete</a>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="4" class="text-center empty-state">No drawings saved yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </section>
+
+        <aside class="section-card">
+          <div class="section-title"><h2>Quick view</h2></div>
+          <div class="mini-item mb-3"><strong>Finance</strong><span>Income and expenses stay grouped separately.</span></div>
+          <div class="mini-item mb-3"><strong>Notepad</strong><span>Notes are saved as text history.</span></div>
+          <div class="mini-item"><strong>Paint</strong><span>Drawings are saved with image previews.</span></div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script>
+    (() => {
+      const toggle = document.getElementById('sidebarToggle');
+      const layout = document.getElementById('dashboardLayout');
+      if (toggle && layout) {
+        toggle.addEventListener('click', () => layout.classList.toggle('sidebar-collapsed'));
+      }
+
+      const buttons = document.querySelectorAll('.history-filter');
+      const sections = document.querySelectorAll('.history-section');
+      const setActive = (target) => {
+        buttons.forEach((button) => {
+          const active = button.dataset.target === target;
+          button.classList.toggle('btn-light', active);
+          button.classList.toggle('btn-outline-light', !active);
+          button.classList.toggle('active', active);
+        });
+        sections.forEach((section) => {
+          section.style.display = target === 'all' || section.dataset.section === target ? '' : 'none';
+        });
+      };
+
+      buttons.forEach((button) => button.addEventListener('click', () => setActive(button.dataset.target)));
+    })();
+  </script>
+</body>
+</html>

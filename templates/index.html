@@ -1,0 +1,382 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>ExpenseTracker | Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'home.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'addmoney.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --bg: #07111b;
+            --panel: rgba(9, 16, 27, 0.88);
+            --panel-border: rgba(255,255,255,.08);
+            --text: #eff5ff;
+            --muted: rgba(239,245,255,.72);
+            --accent: #63d6c8;
+            --accent2: #ffb347;
+            --danger: #ff7c5c;
+        }
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(99, 214, 200, 0.16), transparent 28%),
+                radial-gradient(circle at top right, rgba(255, 179, 71, 0.12), transparent 25%),
+                linear-gradient(180deg, #061018 0%, #0c1726 100%);
+            color: var(--text);
+        }
+        .dashboard-shell { min-height: 100vh; }
+        .topbar {
+            position: sticky; top: 0; z-index: 20;
+            backdrop-filter: blur(18px);
+            background: rgba(7, 13, 21, 0.72);
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+        .topbar-inner {
+            max-width: 1500px; margin: 0 auto; padding: .9rem 1.25rem;
+            display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+        }
+        .brand {
+            display: inline-flex; align-items: center; gap: .75rem; color: var(--text); font-weight: 800; text-decoration: none;
+        }
+        .brand-mark {
+            width: 2.5rem; height: 2.5rem; border-radius: .9rem; display: grid; place-items: center;
+            background: linear-gradient(135deg, var(--accent2), #ff7c5c); color: #10161f; box-shadow: 0 12px 28px rgba(255,179,71,.24);
+        }
+        .top-actions { display: flex; gap: .6rem; flex-wrap: wrap; }
+        .top-actions .btn { border-radius: 999px; }
+        .sidebar-toggle {
+            border: 1px solid rgba(255,255,255,.1);
+            background: rgba(255,255,255,.04);
+            color: var(--text);
+            width: 44px; height: 44px; border-radius: 14px;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .layout {
+            max-width: 1500px; margin: 0 auto; padding: 1.25rem;
+            display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 1.25rem;
+        }
+        .layout.sidebar-collapsed { grid-template-columns: 1fr; }
+        .layout.sidebar-collapsed .sidebar { display: none; }
+        .sidebar, .panel {
+            background: var(--panel); border: 1px solid var(--panel-border); border-radius: 28px; box-shadow: 0 24px 70px rgba(0,0,0,.35); overflow: hidden;
+        }
+        .sidebar { position: sticky; top: 96px; height: fit-content; }
+        .sidebar-hero {
+            padding: 1.3rem; background: linear-gradient(135deg, rgba(99,214,200,.16), rgba(255,179,71,.12));
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+        .sidebar-hero h2 { margin: 0; font-size: 1.15rem; font-weight: 800; }
+        .sidebar-hero p { margin: .35rem 0 0; color: var(--muted); }
+        .navlist { padding: .6rem; display: grid; gap: .35rem; }
+        .navlist a {
+            color: var(--text); text-decoration: none; padding: .9rem 1rem; border-radius: 16px;
+            display: flex; align-items: center; gap: .8rem; background: rgba(255,255,255,.03); border: 1px solid transparent;
+        }
+        .navlist a:hover { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.08); }
+        .sidebar-footer { padding: 1rem 1.15rem 1.2rem; border-top: 1px solid rgba(255,255,255,.08); color: var(--muted); }
+        .profile-menu .dropdown-toggle::after { display: none; }
+        .profile-chip {
+            display: inline-flex; align-items: center; gap: .7rem; padding: .55rem .8rem; border-radius: 999px;
+            background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); color: var(--text);
+        }
+        .profile-avatar {
+            width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), #8be2d8); color: #071018;
+        }
+        .dropdown-menu.dashboard-menu {
+            background: rgba(7, 13, 21, .96); border: 1px solid rgba(255,255,255,.1); border-radius: 18px; box-shadow: 0 24px 70px rgba(0,0,0,.35);
+        }
+        .dropdown-menu.dashboard-menu .dropdown-item { color: var(--text); }
+        .dropdown-menu.dashboard-menu .dropdown-item:hover { background: rgba(255,255,255,.06); }
+        .dropdown-menu.dashboard-menu .dropdown-divider { border-top: 1px solid rgba(255,255,255,.08); }
+        .dropdown-menu.dashboard-menu .dropdown-item i { width: 1rem; text-align: center; }
+        .panel { padding: 1.25rem; }
+        .hero {
+            padding: 1.5rem; border-radius: 24px;
+            background: linear-gradient(135deg, rgba(99,214,200,.12), rgba(255,179,71,.10));
+            border: 1px solid rgba(255,255,255,.08);
+        }
+        .hero h1 { margin: 0; font-size: clamp(2rem, 4vw, 3.25rem); font-weight: 800; letter-spacing: -0.03em; }
+        .hero p { margin: .75rem 0 0; color: var(--muted); max-width: 68ch; line-height: 1.7; }
+        .hero-grid { margin-top: 1rem; display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: .9rem; }
+        .stat-card {
+            border-radius: 22px; padding: 1rem 1.1rem;
+            background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+        }
+        .stat-card .label { color: var(--muted); font-size: .9rem; }
+        .stat-card .value { font-size: 1.7rem; font-weight: 800; margin-top: .35rem; }
+        .content-grid { margin-top: 1.25rem; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(320px, .65fr); gap: 1.25rem; }
+        .section-card {
+            border-radius: 24px; padding: 1.15rem;
+            background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+        }
+        .section-title { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom: 1rem; }
+        .section-title h2 { margin:0; font-size: 1.15rem; font-weight: 800; }
+        .table { color: var(--text); margin-bottom: 0; }
+        .table td, .table th { border-color: rgba(255,255,255,.08); vertical-align: middle; }
+        .table thead th { border-top: 0; color: var(--muted); font-size: .82rem; letter-spacing: .04em; text-transform: uppercase; }
+        .pill { display:inline-flex; align-items:center; gap:.4rem; padding:.45rem .75rem; border-radius:999px; font-size:.85rem; }
+        .pill-income { background: rgba(99,214,200,.16); color:#8be2d8; }
+        .pill-expense { background: rgba(255,124,92,.16); color:#ff9a86; }
+        .progress { height: 12px; background: rgba(255,255,255,.08); border-radius: 999px; }
+        .progress-bar { background: linear-gradient(90deg, #63d6c8, #8be2d8); }
+        .mini-list { display:grid; gap:.75rem; }
+        .mini-item { padding: .95rem 1rem; border-radius: 18px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); }
+        .mini-item strong { display:block; }
+        .mini-item span { color: var(--muted); font-size:.92rem; }
+        .empty-state { padding: 2rem 1rem; text-align: center; color: var(--muted); }
+        .page-controls { display:flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
+        .page-controls .pagination { margin-bottom: 0; }
+        .alert { border-radius: 16px; }
+        @media (max-width: 1200px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+            .hero-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+            .content-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 720px) {
+            .hero-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-shell">
+        <div class="topbar">
+            <div class="topbar-inner">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <button class="sidebar-toggle" type="button" id="sidebarToggle" aria-label="Toggle sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <a class="brand" href="{% url 'home' %}">
+                        <span class="brand-mark">ET</span>
+                        <span>ExpenseTracker</span>
+                    </a>
+                </div>
+                <div class="top-actions align-items-center">
+                    <a class="btn btn-outline-light btn-sm" href="{% url 'addmoney' %}"><i class="fas fa-plus mr-1"></i>Add Entry</a>
+                    <a class="btn btn-info btn-sm" href="{% url 'tables' %}"><i class="fas fa-history mr-1"></i>History</a>
+                    <div class="dropdown profile-menu">
+                        <a class="profile-chip dropdown-toggle" href="#" role="button" id="profileMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {% if profile and profile.image %}
+                                <img src="{{ profile.image.url }}" class="profile-avatar" alt="{{ request.user.first_name|default:request.user.username }}">
+                            {% else %}
+                                <span class="profile-avatar">{{ request.user.first_name|default:request.user.username|slice:':1'|upper }}</span>
+                            {% endif %}
+                            <span class="d-none d-sm-inline">{{ request.user.first_name|default:request.user.username }}</span>
+                            <i class="fas fa-chevron-down small"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right dashboard-menu" aria-labelledby="profileMenuButton">
+                            <a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user-circle mr-2"></i>Profile</a>
+                            <a class="dropdown-item" href="{% url 'settings' %}"><i class="fas fa-cog mr-2"></i>Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'notepad' %}"><i class="fas fa-sticky-note mr-2"></i>Notepad</a>
+                            <a class="dropdown-item" href="{% url 'paint' %}"><i class="fas fa-paint-brush mr-2"></i>Paint</a>
+                            <a class="dropdown-item" href="{% url 'handleLogout' %}"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layout">
+            <aside class="sidebar">
+                <div class="sidebar-hero">
+                    <h2>{{ request.user.first_name }} {{ request.user.last_name }}</h2>
+                    <p>Financial overview, quick actions, and live snapshots.</p>
+                </div>
+                <div class="navlist">
+                    <a href="{% url 'index' %}"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+                    <a href="{% url 'profile' %}"><i class="fas fa-user-circle"></i>Profile</a>
+                    <a href="{% url 'notepad' %}"><i class="fas fa-sticky-note"></i>Notepad</a>
+                    <a href="{% url 'paint' %}"><i class="fas fa-paint-brush"></i>Paint</a>
+                    <a href="{% url 'weekly' %}"><i class="fas fa-calendar-week"></i>Weekly record</a>
+                    <a href="{% url 'stats' %}"><i class="fas fa-chart-pie"></i>Monthly record</a>
+                    <a href="{% url 'info' %}"><i class="fas fa-chart-line"></i>Yearly record</a>
+                    <a href="{% url 'tables' %}"><i class="fas fa-table"></i>History</a>
+                    <a href="{% url 'settings' %}"><i class="fas fa-cog"></i>Settings</a>
+                    <a href="{% url 'handleLogout' %}"><i class="fas fa-sign-out-alt"></i>Logout</a>
+                </div>
+                <div class="sidebar-footer">
+                    <div class="small text-uppercase mb-2">Account</div>
+                    <div class="d-flex justify-content-between"><span>Transactions</span><strong>{{ transaction_count }}</strong></div>
+                    <div class="d-flex justify-content-between mt-1"><span>Budget used</span><strong>{{ budget_used }}%</strong></div>
+                </div>
+            </aside>
+
+            <main class="panel">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mb-3 alert-dismissible fade show" role="alert">
+                    <strong>Message:</strong> {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+
+                <section class="hero">
+                    <div class="d-flex flex-column flex-lg-row align-items-lg-end justify-content-between gap-3">
+                        <div>
+                            <div class="text-uppercase small" style="color: rgba(239,245,255,.68);">Dashboard overview</div>
+                            <h1>Track money with a cleaner, faster dashboard</h1>
+                            <p>
+                                See your income, spending, savings, and categories at a glance. Add new entries from the quick actions and keep your finances organized.
+                            </p>
+                        </div>
+                        <div class="top-actions">
+                            <a href="{% url 'addmoney' %}" class="btn btn-light btn-lg"><i class="fas fa-plus mr-2"></i>New Entry</a>
+                            <a href="{% url 'tables' %}" class="btn btn-outline-light btn-lg">Open History</a>
+                        </div>
+                    </div>
+                    <div class="hero-grid">
+                        <div class="stat-card">
+                            <div class="label">Current balance</div>
+                            <div class="value">{{ current_balance }}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="label">Total income</div>
+                            <div class="value">{{ total_income }}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="label">Total expense</div>
+                            <div class="value">{{ total_expense }}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="label">Savings target</div>
+                            <div class="value">{{ savings_target }}</div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="content-grid">
+                    <section class="section-card">
+                        <div class="section-title">
+                            <h2>Recent transactions</h2>
+                            <a href="{% url 'tables' %}" class="btn btn-outline-light btn-sm">See all</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Category</th>
+                                        <th>Date</th>
+                                        <th class="text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for info in page_obj %}
+                                    <tr>
+                                        <td>
+                                            <span class="pill {% if info.add_money == 'Income' %}pill-income{% else %}pill-expense{% endif %}">
+                                                <i class="fas {% if info.add_money == 'Income' %}fa-arrow-up{% else %}fa-arrow-down{% endif %}"></i>
+                                                {{ info.add_money }}
+                                            </span>
+                                        </td>
+                                        <td>{{ info.quantity }}</td>
+                                        <td>{{ info.Category }}</td>
+                                        <td>{{ info.Date }}</td>
+                                        <td class="text-right">
+                                            <a href="{% url 'expense_edit' info.id %}" class="btn btn-success btn-sm">Edit</a>
+                                            <a href="{% url 'expense_delete' info.id %}" class="btn btn-danger btn-sm">Delete</a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5"><div class="empty-state">No transactions yet. Use “New Entry” to add your first record.</div></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="page-controls">
+                            <div class="text-muted">Showing page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</div>
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    {% if page_obj.has_previous %}
+                                    <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
+                                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                                    {% endif %}
+                                    {% if page_obj.has_next %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a></li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </section>
+
+                    <section class="section-card">
+                        <div class="section-title">
+                            <h2>Budget snapshot</h2>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="muted">Budget used</span>
+                                <strong>{{ budget_used }}%</strong>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: {{ budget_used }}%"></div>
+                            </div>
+                        </div>
+                        <div class="mini-list mb-4">
+                            <div class="mini-item">
+                                <strong>Income target</strong>
+                                <span>{{ monthly_income_target }}</span>
+                            </div>
+                            <div class="mini-item">
+                                <strong>Transactions tracked</strong>
+                                <span>{{ transaction_count }}</span>
+                            </div>
+                            <div class="mini-item">
+                                <strong>Current balance</strong>
+                                <span>{{ current_balance }}</span>
+                            </div>
+                        </div>
+
+                        <div class="section-title">
+                            <h2>Top categories</h2>
+                        </div>
+                        <div class="mini-list">
+                            {% for item in category_breakdown %}
+                            <div class="mini-item">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <strong>{{ item.category }}</strong>
+                                    <span>{{ item.total }}</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ item.percent }}%"></div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="mini-item text-center">No expense categories yet.</div>
+                            {% endfor %}
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script>
+        (function () {
+            var sidebarToggle = document.getElementById('sidebarToggle');
+            var layout = document.querySelector('.layout');
+            if (sidebarToggle && layout) {
+                sidebarToggle.addEventListener('click', function () {
+                    layout.classList.toggle('sidebar-collapsed');
+                });
+            }
+        })();
+    </script>
+</body>
+</html>
