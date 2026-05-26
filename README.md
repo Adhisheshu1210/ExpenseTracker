@@ -2,6 +2,9 @@
 
 A professional, user-friendly Django web application to help users manage personal finances. The project provides tools for recording income and expenses, viewing analytics, and maintaining user profiles with savings and income details.
 
+
+#Demo video:   https://www.youtube.com/watch?v=I2P80HcR73Q
+
 ## Features
 
 - Register, log in, and manage a personal finance dashboard
